@@ -28,6 +28,18 @@ class LotusNode < MandalaNode
   THETA  = Math::PI / 8.0                              # 22.5° — each petal spans exactly 45°
   ARC_K  = (4.0 / 3.0) * Math.tan(Math::PI / 16.0)   # bezier handle for 45° circular arc
 
+  # pastel rainbow: HSV(hue, 0.3, 1.0) — 8 evenly spaced hues, mainly white
+  PETAL_COLORS = [
+    [255, 179, 179],  # red
+    [255, 236, 179],  # orange
+    [217, 255, 179],  # yellow-green
+    [179, 255, 198],  # green
+    [179, 255, 255],  # cyan
+    [179, 198, 255],  # blue
+    [217, 179, 255],  # violet
+    [255, 179, 236],  # pink
+  ].freeze
+
   def initialize(x, y, z, inner_r, outer_r, color)
     super(x, y, z, 0, outer_r - inner_r, inner_r, color)
     @inner_r = inner_r.to_f
@@ -50,6 +62,7 @@ class LotusNode < MandalaNode
 
     PETAL_COUNT.times do |i|
       a = TWO_PI * i / PETAL_COUNT
+      app.fill(*PETAL_COLORS[i])
 
       # base corners sit exactly on the inner circle, 22.5° either side of petal axis
       # adjacent petals share these points → no gaps on the circle

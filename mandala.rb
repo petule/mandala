@@ -19,7 +19,7 @@ class Mandala < Propane::App
     @dome_max     = @max_height * 3.5
     @scene        = MandalaScene.new(@max_height)
     raw_green = load_image('textures/green.png')
-    tf = TextureFactory.new(self)
+    tf = TextureFactory.new(self, ARGB)
     @textures = {
       fire:  load_image('textures/fire.jpg'),
       vajra: load_image('textures/vajra.jpeg'),

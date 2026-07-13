@@ -1,6 +1,4 @@
 class TextureFactory
-  ARGB = 2  # Processing image format constant
-
   # X-quadrant tints: [r, g, b, opacity] — applied as linear mix over green texture
   QUADRANT_TINTS = {
     north: [220,  50,  70, 0.70],   # red/pink
@@ -9,14 +7,15 @@ class TextureFactory
     south: [215, 235, 255, 0.60],   # white-blue (lightens toward clouds)
   }.freeze
 
-  def initialize(app)
-    @app = app
+  def initialize(app, argb)
+    @app  = app
+    @argb = argb
   end
 
   def circle(base_tex, diameter, tile_size)
     r_sq = (diameter / 2.0) ** 2
     cx   = diameter / 2
-    img  = @app.create_image(diameter, diameter, ARGB)
+    img  = @app.create_image(diameter, diameter, @argb)
     base_tex.load_pixels
     img.load_pixels
     tw = base_tex.width
@@ -39,7 +38,7 @@ class TextureFactory
 
   def quadrant(base_tex, diameter, tile_size)
     cx   = diameter / 2
-    img  = @app.create_image(diameter, diameter, ARGB)
+    img  = @app.create_image(diameter, diameter, @argb)
     base_tex.load_pixels
     img.load_pixels
     tw = base_tex.width

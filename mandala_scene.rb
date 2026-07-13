@@ -62,11 +62,10 @@ class MandalaScene
       [200, [190, 45, 45]],
       [180, [210, 190, 40]],
     ].each do |half, color|
-      gate_h = 395 - half - T_WALL / 2.0
-      add_wall_with_gate(root, 0,     -half, 0,       half, T_WALL, color, gate_h: gate_h)
-      add_wall_with_gate(root, 0,      half, 0,       half, T_WALL, color, gate_h: gate_h)
-      add_wall_with_gate(root, -half,     0, HALF_PI, half, T_WALL, color, gate_h: gate_h)
-      add_wall_with_gate(root,  half,     0, HALF_PI, half, T_WALL, color, gate_h: gate_h)
+      add_wall_with_gate(root, 0,     -half, 0,       half, T_WALL, color, gate_h: @max_height)
+      add_wall_with_gate(root, 0,      half, 0,       half, T_WALL, color, gate_h: @max_height)
+      add_wall_with_gate(root, -half,     0, HALF_PI, half, T_WALL, color, gate_h: @max_height)
+      add_wall_with_gate(root,  half,     0, HALF_PI, half, T_WALL, color, gate_h: @max_height)
       [[-half, -half], [half, -half], [-half, half], [half, half]].each do |rx, ry|
         root.add_child(WallNode.new(rx, ry, 0, 0, T_WALL, T_WALL, color))
       end
@@ -83,7 +82,7 @@ class MandalaScene
     root.add_child(LotusNode.new(0, 0, 2, 28, 77, [255, 170, 200]))
   end
 
-  def add_wall_with_gate(root, cx, cy, rot_z, half, t, color, gap = 30, gate_h: @max_height * 1.6)
+  def add_wall_with_gate(root, cx, cy, rot_z, half, t, color, gap = 30, gate_h: @max_height)
     seg = half - gap / 2.0
     off = (half + gap / 2.0) / 2.0
 
