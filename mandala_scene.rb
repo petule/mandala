@@ -6,12 +6,21 @@ require_relative 'nodes/fire_dome_node'
 require_relative 'nodes/vajra_dome_node'
 require_relative 'nodes/diamond_throne_node'
 require_relative 'nodes/rising_group_node'
+require_relative 'nodes/syllable_node'
 
 class MandalaScene
   HALF_PI = (Math::PI / 2.0).freeze
   TWO_PI  = (Math::PI * 2.0).freeze
-  T_WALL = 7.freeze
-  Z_LIFT = 7.freeze
+  T_WALL  = 7.freeze
+  Z_LIFT  = 7.freeze
+
+  # petal index → syllable texture key (0=right, 2=front, 4=left, 6=back)
+  SYLLABLE_PETALS = {
+    2 => :hung,
+    0 => :a,
+    6 => :om,
+    4 => :tram,
+  }.freeze
 
   attr_reader :root, :gates, :fire_dome, :vajra_dome
 
@@ -39,6 +48,11 @@ class MandalaScene
 
   def update_gate_push(offset)
     @gates.each { |gate| gate.gate_offset = offset }
+  end
+
+  def update_syllables(progress)
+    @syllables.each { |s| s.syllable_progress = progress }
+    @lotus.syllable_progress = progress
   end
 
   private
@@ -83,9 +97,35 @@ class MandalaScene
     root.add_child(FloorNode.new(0, 0, 0, 0, 400, 400, [255, 255, 255], texture_key: :inner))
     rise = RisingGroupNode.new(0, 0, 0, @max_height, DiamondThroneNode::TOTAL_H + 2)
     rise.add_child(DiamondThroneNode.new(0, 0, 0))
-    # TODO: slabiky na platkach lotosu — zatim jen tecky udelat a pak textura slabik
-    rise.add_child(LotusNode.new(0, 0, DiamondThroneNode::TOTAL_H + 2, 28, 77, [255, 170, 200]))
+    lotus = build_lotus
+    rise.add_child(lotus)
     root.add_child(rise)
+  end
+
+  def build_lotus
+    @lotus    = LotusNode.new(0, 0, DiamondThroneNode::TOTAL_H + 2, 28, 77, [255, 170, 200])
+    @syllables = []
+    mid_r = (28.0 + 77.0) / 2.0
+    # back-to-front order so closer syllables render on top (painter's algorithm with DISABLE_DEPTH_MASK)
+    # 6=om(back), 4=tram(left), 0=a(right), hri(center), 2=hung(front)
+    [[6, :om, 45, 25], [4, :tram, 80, 50], [0, :a, 45, 25]].each do |petal_i, key, w, h|
+      a = TWO_PI * petal_i / LotusNode::PETAL_COUNT
+      s = SyllableNode.new(Math.cos(a) * mid_r, Math.sin(a) * mid_r, 0, a, w, h, key)
+      @syllables << s
+      @lotus.add_child(s)
+    end
+    [:hri, :hung].each_with_index do |key, i|
+      petal_i = i == 0 ? nil : 2
+      if petal_i
+        a = TWO_PI * petal_i / LotusNode::PETAL_COUNT
+        s = SyllableNode.new(Math.cos(a) * mid_r, Math.sin(a) * mid_r, 0, a, 80, 50, key)
+      else
+        s = SyllableNode.new(0, 0, 0, HALF_PI, 80, 50, key)
+      end
+      @syllables << s
+      @lotus.add_child(s)
+    end
+    @lotus
   end
 
   def add_wall_with_gate(root, cx, cy, rot_z, half, t, color, gap = 30, gate_h: @max_height)

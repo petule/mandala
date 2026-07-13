@@ -9,16 +9,18 @@ class Mandala < Propane::App
 
   def setup
     sketch_title '3D Mandala'
-    @cam_x, @cam_y, @cam_z = 0.0, 0.0, -250.0
+@cam_x, @cam_y, @cam_z = 0.0, 0.0, -250.0
     @rot_x, @rot_y = 1.0, 0.5
     @wall_height  = 0.0
     @max_height   = 100.0
     @gate_push    = 0.0
     @gate_push_max = 20.0
-    @vajra_height = 20.0
-    @vajra_max    = @max_height * 3.0
-    @dome_height  = 10.0
-    @dome_max     = @max_height * 3.5
+    @vajra_height    = 20.0
+    @vajra_max       = @max_height * 3.0
+    @syllable_height = 0.0
+    @syllable_max    = @max_height
+    @dome_height     = 10.0
+    @dome_max        = @max_height * 3.5
     @scene        = MandalaScene.new(@max_height)
     raw_green = load_image('textures/green.png')
     tf = TextureFactory.new(self, ARGB)
@@ -26,7 +28,12 @@ class Mandala < Propane::App
       fire:  load_image('textures/fire.jpg'),
       vajra: load_image('textures/vajra.jpeg'),
       green: tf.circle(raw_green, 840, 100),
-      inner: tf.quadrant(raw_green, 400, 60)
+      inner: tf.quadrant(raw_green, 400, 60),
+      hung:  load_image('textures/sylabes/hung.png'),
+      a:     load_image('textures/sylabes/a.png'),
+      om:    load_image('textures/sylabes/om.png'),
+      tram:  load_image('textures/sylabes/tram.png'),
+      hri:   load_image('textures/sylabes/hri.png'),
     }
   end
 
@@ -43,21 +50,25 @@ class Mandala < Propane::App
         @dome_height = [@dome_height + 2.0, @dome_max].min
       elsif @gate_push >= @gate_push_max
         @vajra_height = [@vajra_height + 2.0, @vajra_max].min
-      elsif @wall_height >= @max_height
+      elsif @syllable_height >= @syllable_max
         @gate_push = [@gate_push + 2.0, @gate_push_max].min
+      elsif @wall_height >= @max_height
+        @syllable_height = [@syllable_height + 2.0, @syllable_max].min
       end
-    end
-    if down_held
+    elsif down_held
       if @dome_height > 0
         @dome_height = [@dome_height - 2.0, 0.0].max
       elsif @vajra_height > 0
         @vajra_height = [@vajra_height - 2.0, 0.0].max
       elsif @gate_push > 0
         @gate_push = [@gate_push - 2.0, 0.0].max
+      elsif @syllable_height > 0
+        @syllable_height = [@syllable_height - 2.0, 0.0].max
       end
     end
 
     @scene.update_vajra(@vajra_height)
+    @scene.update_syllables(@syllable_height / @syllable_max)
     @scene.update_dome(@dome_height)
     @scene.update_gates(@wall_height / @max_height)
     @scene.update_gate_push(@gate_push)
@@ -91,7 +102,7 @@ class Mandala < Propane::App
       case key_code
       when UP then @wall_height = [@wall_height + height_step, @max_height].min
       when DOWN
-        if @dome_height <= 0 && @vajra_height <= 0 && @gate_push <= 0
+        if @dome_height <= 0 && @vajra_height <= 0 && @gate_push <= 0 && @syllable_height <= 0
           @wall_height = [@wall_height - height_step, 0.0].max
         end
       end
