@@ -4,6 +4,8 @@ require_relative 'nodes/wall_node'
 require_relative 'nodes/gate_node'
 require_relative 'nodes/fire_dome_node'
 require_relative 'nodes/vajra_dome_node'
+require_relative 'nodes/diamond_throne_node'
+require_relative 'nodes/rising_group_node'
 
 class MandalaScene
   HALF_PI = (Math::PI / 2.0).freeze
@@ -76,14 +78,14 @@ class MandalaScene
     end
   end
 
+  #vnitrek mandaly
   def build_inner(root)
     root.add_child(FloorNode.new(0, 0, 0, 0, 400, 400, [255, 255, 255], texture_key: :inner))
-    build_lotus(root)
-  end
-
-  def build_lotus(root)
-    # TODO: slabiky na platkach lotosu —  zatim jen tecky udelat a pak textura slabik, matemaricky to nevykreslim ani za dobu trvani vesmiru :(
-    root.add_child(LotusNode.new(0, 0, 2, 28, 77, [255, 170, 200]))
+    rise = RisingGroupNode.new(0, 0, 0, @max_height, DiamondThroneNode::TOTAL_H + 2)
+    rise.add_child(DiamondThroneNode.new(0, 0, 0))
+    # TODO: slabiky na platkach lotosu — zatim jen tecky udelat a pak textura slabik
+    rise.add_child(LotusNode.new(0, 0, DiamondThroneNode::TOTAL_H + 2, 28, 77, [255, 170, 200]))
+    root.add_child(rise)
   end
 
   def add_wall_with_gate(root, cx, cy, rot_z, half, t, color, gap = 30, gate_h: @max_height)
