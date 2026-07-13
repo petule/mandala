@@ -26,7 +26,7 @@ class Mandala < Propane::App
       fire:  load_image('textures/fire.jpg'),
       vajra: load_image('textures/vajra.jpeg'),
       green: tf.circle(raw_green, 840, 100),
-      inner: tf.quadrant(raw_green, 360, 60)
+      inner: tf.quadrant(raw_green, 400, 60)
     }
   end
 
