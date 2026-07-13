@@ -3,6 +3,8 @@ require_relative 'mandala_scene'
 require_relative 'texture_factory'
 
 class Mandala < Propane::App
+  ANIM_STEP = 2.0.freeze
+  SPEED = 6.0.freeze
   def settings
     size(1600, 1200, P3D)
   end
@@ -16,11 +18,11 @@ class Mandala < Propane::App
     @gate_push    = 0.0
     @gate_push_max = 20.0
     @vajra_height    = 20.0
-    @vajra_max       = @max_height * 3.0
+    @vajra_max       = @max_height * MandalaScene::VAJRA_H_FACTOR
     @syllable_height = 0.0
     @syllable_max    = @max_height
     @dome_height     = 10.0
-    @dome_max        = @max_height * 3.5
+    @dome_max        = @max_height * MandalaScene::DOME_H_FACTOR
     @scene        = MandalaScene.new(@max_height)
     raw_green = load_image('textures/green.png')
     tf = TextureFactory.new(self, ARGB)
@@ -47,23 +49,23 @@ class Mandala < Propane::App
 
     if up_held
       if @vajra_height >= @vajra_max
-        @dome_height = [@dome_height + 2.0, @dome_max].min
+        @dome_height = [@dome_height + ANIM_STEP, @dome_max].min
       elsif @gate_push >= @gate_push_max
-        @vajra_height = [@vajra_height + 2.0, @vajra_max].min
+        @vajra_height = [@vajra_height + ANIM_STEP, @vajra_max].min
       elsif @syllable_height >= @syllable_max
-        @gate_push = [@gate_push + 2.0, @gate_push_max].min
+        @gate_push = [@gate_push + ANIM_STEP, @gate_push_max].min
       elsif @wall_height >= @max_height
-        @syllable_height = [@syllable_height + 2.0, @syllable_max].min
+        @syllable_height = [@syllable_height + ANIM_STEP, @syllable_max].min
       end
     elsif down_held
       if @dome_height > 0
-        @dome_height = [@dome_height - 2.0, 0.0].max
+        @dome_height = [@dome_height - ANIM_STEP, 0.0].max
       elsif @vajra_height > 0
-        @vajra_height = [@vajra_height - 2.0, 0.0].max
+        @vajra_height = [@vajra_height - ANIM_STEP, 0.0].max
       elsif @gate_push > 0
-        @gate_push = [@gate_push - 2.0, 0.0].max
+        @gate_push = [@gate_push - ANIM_STEP, 0.0].max
       elsif @syllable_height > 0
-        @syllable_height = [@syllable_height - 2.0, 0.0].max
+        @syllable_height = [@syllable_height - ANIM_STEP, 0.0].max
       end
     end
 
@@ -94,24 +96,22 @@ class Mandala < Propane::App
   end
 
   def handle_keyboard
-    speed       = 6.0
-    height_step = 2.0
     return unless key_pressed?
 
     if key == CODED
       case key_code
-      when UP then @wall_height = [@wall_height + height_step, @max_height].min
+      when UP then @wall_height = [@wall_height + ANIM_STEP, @max_height].min
       when DOWN
         if @dome_height <= 0 && @vajra_height <= 0 && @gate_push <= 0 && @syllable_height <= 0
-          @wall_height = [@wall_height - height_step, 0.0].max
+          @wall_height = [@wall_height - ANIM_STEP, 0.0].max
         end
       end
     else
       case key
-      when 'w', 'W' then @cam_z += speed
-      when 's', 'S' then @cam_z -= speed
-      when 'a', 'A' then @cam_x += speed
-      when 'd', 'D' then @cam_x -= speed
+      when 'w', 'W' then @cam_z += SPEED
+      when 's', 'S' then @cam_z -= SPEED
+      when 'a', 'A' then @cam_x += SPEED
+      when 'd', 'D' then @cam_x -= SPEED
       end
     end
   end

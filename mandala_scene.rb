@@ -9,19 +9,19 @@ require_relative 'nodes/rising_group_node'
 require_relative 'nodes/syllable_node'
 
 class MandalaScene
-  HALF_PI   = (Math::PI / 2.0).freeze
-  TWO_PI    = (Math::PI * 2.0).freeze
-  T_WALL    = 7.freeze
-  Z_LIFT    = 7.freeze
-  GREEN_D   = 830.freeze
-
-  # petal index → syllable texture key (0=right, 2=front, 4=left, 6=back)
-  SYLLABLE_PETALS = {
-    2 => :hung,
-    0 => :a,
-    6 => :om,
-    4 => :tram,
-  }.freeze
+  HALF_PI        = (Math::PI / 2.0).freeze
+  TWO_PI         = (Math::PI * 2.0).freeze
+  T_WALL         = 7.freeze
+  Z_LIFT         = 7.freeze
+  GREEN_D        = 830.freeze
+  VAJRA_H_FACTOR = 3.0.freeze
+  DOME_H_FACTOR  = 3.5.freeze
+  LOTUS_INNER_R  = 28.freeze
+  LOTUS_OUTER_R  = 77.freeze
+  SYLLABLE_LG_W  = 80.freeze
+  SYLLABLE_LG_H  = 50.freeze
+  SYLLABLE_SM_W  = 45.freeze
+  SYLLABLE_SM_H  = 25.freeze
 
   attr_reader :root, :gates, :fire_dome, :vajra_dome
 
@@ -70,9 +70,9 @@ class MandalaScene
   end
 
   def build_domes(root)
-    @vajra_dome = VajraDomeNode.new(0, 0, 0, 0, 405, @max_height * 3.0, [255, 255, 255])
+    @vajra_dome = VajraDomeNode.new(0, 0, 0, 0, 405, @max_height * VAJRA_H_FACTOR, [255, 255, 255])
     root.add_child(@vajra_dome)
-    @fire_dome = FireDomeNode.new(0, 0, 0, 0, 420, @max_height * 3.5, [230, 75, 10])
+    @fire_dome = FireDomeNode.new(0, 0, 0, 0, 420, @max_height * DOME_H_FACTOR, [230, 75, 10])
     root.add_child(@fire_dome)
   end
 
@@ -106,12 +106,12 @@ class MandalaScene
   end
 
   def build_lotus
-    @lotus    = LotusNode.new(0, 0, 0, 28, 77, [255, 170, 200])
+    @lotus    = LotusNode.new(0, 0, 0, LOTUS_INNER_R, LOTUS_OUTER_R, [255, 170, 200])
     @syllables = []
-    mid_r = (28.0 + 77.0) / 2.0
+    mid_r = (LOTUS_INNER_R + LOTUS_OUTER_R) / 2.0
     # back-to-front order so closer syllables render on top (painter's algorithm with DISABLE_DEPTH_MASK)
     # 6=om(back), 4=tram(left), 0=a(right), hri(center), 2=hung(front)
-    [[6, :om, 45, 25], [4, :tram, 80, 50], [0, :a, 45, 25]].each do |petal_i, key, w, h|
+    [[6, :om, SYLLABLE_SM_W, SYLLABLE_SM_H], [4, :tram, SYLLABLE_LG_W, SYLLABLE_LG_H], [0, :a, SYLLABLE_SM_W, SYLLABLE_SM_H]].each do |petal_i, key, w, h|
       a = TWO_PI * petal_i / LotusNode::PETAL_COUNT
       s = SyllableNode.new(Math.cos(a) * mid_r, Math.sin(a) * mid_r, 5, a, w, h, key)
       @syllables << s
@@ -121,9 +121,9 @@ class MandalaScene
       petal_i = i == 0 ? nil : 2
       if petal_i
         a = TWO_PI * petal_i / LotusNode::PETAL_COUNT
-        s = SyllableNode.new(Math.cos(a) * mid_r, Math.sin(a) * mid_r, 5, a, 80, 50, key)
+        s = SyllableNode.new(Math.cos(a) * mid_r, Math.sin(a) * mid_r, 5, a, SYLLABLE_LG_W, SYLLABLE_LG_H, key)
       else
-        s = SyllableNode.new(0, 0, 5, HALF_PI, 80, 50, key)
+        s = SyllableNode.new(0, 0, 5, HALF_PI, SYLLABLE_LG_W, SYLLABLE_LG_H, key)
       end
       @syllables << s
       @lotus.add_child(s)
