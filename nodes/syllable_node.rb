@@ -15,7 +15,6 @@ class SyllableNode < MandalaNode
 
   def render(app, wall_h, textures = {})
     progress = [@syllable_progress.to_f, 1.0].min
-    app.hint(5)   # DISABLE_DEPTH_MASK — transparent pixels don't occlude geometry behind
     app.push_matrix
     app.translate(@x.to_f, @y.to_f, @z.to_f - (1.0 - progress) * RISE_AMOUNT)
     app.rotate_z(@rot_z.to_f)
@@ -24,7 +23,6 @@ class SyllableNode < MandalaNode
     draw(app, wall_h, textures)
     @children.each { |c| c.render(app, wall_h, textures) }
     app.pop_matrix
-    app.hint(6)   # ENABLE_DEPTH_MASK
   end
 
   private
