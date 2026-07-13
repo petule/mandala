@@ -112,8 +112,10 @@ class Mandala < Propane::App
   def draw_hud
     no_lights
     hint(DISABLE_DEPTH_TEST)
-    fill(255, 255, 200)
     no_stroke
+    text_align(LEFT)
+
+    fill(255, 255, 200)
     text_size(13)
     [
       'W/S   přiblížit / oddálit',
@@ -125,6 +127,18 @@ class Mandala < Propane::App
       'F     automatický průlet',
       'myš   volná rotace',
     ].each_with_index { |line, i| text(line, 12, 20 + i * 18) }
+
+    fill(0, 0, 0, 160)
+    rect_mode(CORNER)
+    rect(0, height - 34, width, 34)
+    fill(220, 210, 180)
+    text_size(16)
+    text_align(CENTER)
+    text(
+      '3D Buddhistická Mandala  ·  Petra Marková  ·  Počítačová grafika II  ·  3. ročník 2025/26  ·  13. 7. 2026',
+      width / 2.0, height - 11
+    )
+
     hint(ENABLE_DEPTH_TEST)
   end
 
