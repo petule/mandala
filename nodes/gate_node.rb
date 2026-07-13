@@ -1,11 +1,12 @@
 require_relative '../mandala_node'
 
 class GateNode < MandalaNode
-  attr_accessor :gate_angle
+  attr_accessor :gate_angle, :gate_offset
 
   def initialize(x, y, z, rot_z, w, d, color)
     super
-    @gate_angle = Math::PI / 2.0
+    @gate_angle  = Math::PI / 2.0
+    @gate_offset = 0.0
   end
 
   private
@@ -16,6 +17,7 @@ class GateNode < MandalaNode
     gap    = @w
 
     app.push_matrix
+    app.translate(0.0, @gate_offset, 0.0)
     app.rotate_x(-@gate_angle)
 
     # Two vertical posts framing the opening

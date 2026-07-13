@@ -13,6 +13,8 @@ class Mandala < Propane::App
     @rot_x, @rot_y = 1.0, 0.5
     @wall_height  = 0.0
     @max_height   = 100.0
+    @gate_push    = 0.0
+    @gate_push_max = 20.0
     @vajra_height = 20.0
     @vajra_max    = @max_height * 3.0
     @dome_height  = 10.0
@@ -39,8 +41,10 @@ class Mandala < Propane::App
     if up_held
       if @vajra_height >= @vajra_max
         @dome_height = [@dome_height + 2.0, @dome_max].min
-      elsif @wall_height >= @max_height
+      elsif @gate_push >= @gate_push_max
         @vajra_height = [@vajra_height + 2.0, @vajra_max].min
+      elsif @wall_height >= @max_height
+        @gate_push = [@gate_push + 2.0, @gate_push_max].min
       end
     end
     if down_held
@@ -48,12 +52,15 @@ class Mandala < Propane::App
         @dome_height = [@dome_height - 2.0, 0.0].max
       elsif @vajra_height > 0
         @vajra_height = [@vajra_height - 2.0, 0.0].max
+      elsif @gate_push > 0
+        @gate_push = [@gate_push - 2.0, 0.0].max
       end
     end
 
     @scene.update_vajra(@vajra_height)
     @scene.update_dome(@dome_height)
     @scene.update_gates(@wall_height / @max_height)
+    @scene.update_gate_push(@gate_push)
 
     translate(width / 2.0, height / 2.0, 0)
     translate(@cam_x, @cam_y, @cam_z)
@@ -84,7 +91,7 @@ class Mandala < Propane::App
       case key_code
       when UP then @wall_height = [@wall_height + height_step, @max_height].min
       when DOWN
-        if @dome_height <= 0 && @vajra_height <= 0
+        if @dome_height <= 0 && @vajra_height <= 0 && @gate_push <= 0
           @wall_height = [@wall_height - height_step, 0.0].max
         end
       end

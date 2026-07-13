@@ -8,8 +8,8 @@ require_relative 'nodes/vajra_dome_node'
 class MandalaScene
   HALF_PI = (Math::PI / 2.0).freeze
   TWO_PI  = (Math::PI * 2.0).freeze
-  T_WALL = 10.freeze
-  Z_LIFT = 10.freeze
+  T_WALL = 7.freeze
+  Z_LIFT = 7.freeze
 
   attr_reader :root, :gates, :fire_dome, :vajra_dome
 
@@ -35,6 +35,10 @@ class MandalaScene
     end
   end
 
+  def update_gate_push(offset)
+    @gates.each { |gate| gate.gate_offset = offset }
+  end
+
   private
 
   def build
@@ -58,9 +62,9 @@ class MandalaScene
   def build_palace(root)
     [
       [240, [240, 240, 240]],
-      [220, [40, 90, 200]],
-      [200, [190, 45, 45]],
-      [180, [210, 190, 40]],
+      [228, [40, 90, 200]],
+      [216, [190, 45, 45]],
+      [204, [210, 190, 40]],
     ].each do |half, color|
       add_wall_with_gate(root, 0,     -half, 0,       half, T_WALL, color, gate_h: @max_height)
       add_wall_with_gate(root, 0,      half, 0,       half, T_WALL, color, gate_h: @max_height)
