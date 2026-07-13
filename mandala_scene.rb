@@ -61,18 +61,18 @@ class MandalaScene
     root   = FloorNode.new(0, 0, 0, 0, 0, 0, [0, 0, 0])
     root.add_child(FloorNode.new(0, 0, 2, 0, 840, 840, [35, 90, 45], circle: true, texture_key: :green))
     lifted = MandalaNode.new(0, 0, Z_LIFT, 0, 0, 0)
-    build_domes(lifted)
     build_palace(lifted)
     build_inner(lifted)
+    build_domes(lifted)
     root.add_child(lifted)
     root
   end
 
   def build_domes(root)
-    @fire_dome = FireDomeNode.new(0, 0, 0, 0, 420, @max_height * 3.5, [230, 75, 10])
-    root.add_child(@fire_dome)
     @vajra_dome = VajraDomeNode.new(0, 0, 0, 0, 405, @max_height * 3.0, [255, 255, 255])
     root.add_child(@vajra_dome)
+    @fire_dome = FireDomeNode.new(0, 0, 0, 0, 420, @max_height * 3.5, [230, 75, 10])
+    root.add_child(@fire_dome)
   end
 
   def build_palace(root)
