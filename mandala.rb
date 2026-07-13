@@ -12,14 +12,15 @@ class Mandala < Propane::App
     @rot_x, @rot_y = 1.0, 0.5
     @wall_height  = 0.0
     @max_height   = 100.0
-    @vajra_height = 10.0
+    @vajra_height = 20.0
     @vajra_max    = @max_height * 3.0
-    @dome_height  = 5.0
+    @dome_height  = 10.0
     @dome_max     = @max_height * 3.5
     @scene        = MandalaScene.new(@max_height)
-    @textures     = {
+    @textures = {
       fire:  load_image('textures/fire.jpg'),
-      vajra: load_image('textures/vajra.jpeg')
+      vajra: load_image('textures/vajra.jpeg'),
+      green: make_circle_texture(load_image('textures/green.png'), 840, 100)
     }
   end
 
@@ -68,6 +69,30 @@ class Mandala < Propane::App
   def mouse_dragged
     @rot_x += (mouse_y - pmouse_y) * 0.005
     @rot_y += (mouse_x - pmouse_x) * 0.005
+  end
+
+  def make_circle_texture(base_tex, diameter, tile_size)
+    r_sq = (diameter / 2.0) ** 2
+    cx   = diameter / 2
+    img  = create_image(diameter, diameter, ARGB)
+    base_tex.load_pixels
+    img.load_pixels
+    tw = base_tex.width
+    th = base_tex.height
+    diameter.times do |py|
+      diameter.times do |px|
+        dx = px - cx; dy = py - cx
+        if dx * dx + dy * dy <= r_sq
+          tx = (px * tw / tile_size.to_f).to_i % tw
+          ty = (py * th / tile_size.to_f).to_i % th
+          img.pixels[py * diameter + px] = base_tex.pixels[ty * tw + tx]
+        else
+          img.pixels[py * diameter + px] = 0
+        end
+      end
+    end
+    img.update_pixels
+    img
   end
 
   def handle_keyboard
