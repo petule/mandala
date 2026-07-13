@@ -74,10 +74,8 @@ class MandalaScene
   end
 
   def build_inner(root)
-    root.add_child(FloorNode.new(0, 0, 0, 0, 240, 240, [20, 55, 140]))
-    root.add_child(FloorNode.new(0, 0, 0, 0, 190, 190, [150, 25, 25]))
+    root.add_child(FloorNode.new(0, 0, 0, 0, 360, 360, [255, 255, 255], texture_key: :inner))
     build_lotus(root)
-    root.add_child(FloorNode.new(0, 0, 0, 0, 45, 45, [255, 215, 80]))
   end
 
   def build_lotus(root)

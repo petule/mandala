@@ -32,7 +32,21 @@ class FloorNode < MandalaNode
         app.end_shape(2)
       end
     else
-      app.box(@w, @d, 3)
+      tex = @texture_key && textures[@texture_key]
+      if tex
+        r_w = @w / 2.0; r_d = @d / 2.0
+        app.fill(255)
+        app.texture_mode(1)
+        app.begin_shape
+        app.texture(tex)
+        app.vertex(-r_w, -r_d, 0.0, 0.0, 0.0)
+        app.vertex( r_w, -r_d, 0.0, 1.0, 0.0)
+        app.vertex( r_w,  r_d, 0.0, 1.0, 1.0)
+        app.vertex(-r_w,  r_d, 0.0, 0.0, 1.0)
+        app.end_shape(2)
+      else
+        app.box(@w, @d, 3)
+      end
     end
   end
 end
