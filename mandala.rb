@@ -9,7 +9,7 @@ class Mandala < Propane::App
 
   def setup
     sketch_title '3D Mandala'
-@cam_x, @cam_y, @cam_z = 0.0, 0.0, -250.0
+    @cam_x, @cam_y, @cam_z = 0.0, 0.0, -250.0
     @rot_x, @rot_y = 1.0, 0.5
     @wall_height  = 0.0
     @max_height   = 100.0
@@ -27,7 +27,7 @@ class Mandala < Propane::App
     @textures = {
       fire:  load_image('textures/fire.jpg'),
       vajra: load_image('textures/vajra.jpeg'),
-      green: tf.circle(raw_green, 840, 100),
+      green: tf.circle(raw_green, MandalaScene::GREEN_D, 100),
       inner: tf.quadrant(raw_green, 400, 60),
       hung:  load_image('textures/sylabes/hung.png'),
       a:     load_image('textures/sylabes/a.png'),

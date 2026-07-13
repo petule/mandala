@@ -9,10 +9,11 @@ require_relative 'nodes/rising_group_node'
 require_relative 'nodes/syllable_node'
 
 class MandalaScene
-  HALF_PI = (Math::PI / 2.0).freeze
-  TWO_PI  = (Math::PI * 2.0).freeze
-  T_WALL  = 7.freeze
-  Z_LIFT  = 7.freeze
+  HALF_PI   = (Math::PI / 2.0).freeze
+  TWO_PI    = (Math::PI * 2.0).freeze
+  T_WALL    = 7.freeze
+  Z_LIFT    = 7.freeze
+  GREEN_D   = 830.freeze
 
   # petal index → syllable texture key (0=right, 2=front, 4=left, 6=back)
   SYLLABLE_PETALS = {
@@ -59,7 +60,7 @@ class MandalaScene
 
   def build
     root = FloorNode.new(0, 0, 0, 0, 0, 0, [0, 0, 0])
-    root.add_child(FloorNode.new(0, 0, 2, 0, 840, 840, [35, 90, 45], circle: true, texture_key: :green))
+    root.add_child(FloorNode.new(0, 0, 2, 0, GREEN_D, GREEN_D, [35, 90, 45], circle: true, texture_key: :green))
     lifted = MandalaNode.new(0, 0, Z_LIFT, 0, 0, 0)
     build_palace(lifted)
     build_inner(lifted)
