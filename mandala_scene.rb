@@ -58,7 +58,7 @@ class MandalaScene
   private
 
   def build
-    root   = FloorNode.new(0, 0, 0, 0, 0, 0, [0, 0, 0])
+    root = FloorNode.new(0, 0, 0, 0, 0, 0, [0, 0, 0])
     root.add_child(FloorNode.new(0, 0, 2, 0, 840, 840, [35, 90, 45], circle: true, texture_key: :green))
     lifted = MandalaNode.new(0, 0, Z_LIFT, 0, 0, 0)
     build_palace(lifted)
@@ -95,22 +95,24 @@ class MandalaScene
   #vnitrek mandaly
   def build_inner(root)
     root.add_child(FloorNode.new(0, 0, 0, 0, 400, 400, [255, 255, 255], texture_key: :inner))
-    rise = RisingGroupNode.new(0, 0, 0, @max_height, DiamondThroneNode::TOTAL_H + 2)
-    rise.add_child(DiamondThroneNode.new(0, 0, 0))
-    lotus = build_lotus
-    rise.add_child(lotus)
-    root.add_child(rise)
+    throne_rise = RisingGroupNode.new(0, 0, 0, @max_height, DiamondThroneNode::TOTAL_H + 2)
+    throne_rise.add_child(DiamondThroneNode.new(0, 0, 0))
+    root.add_child(throne_rise)
+    lotus_top = DiamondThroneNode::TOTAL_H + 2
+    lotus_rise = RisingGroupNode.new(0, 0, lotus_top, @max_height, lotus_top - 5, hide_at_zero: false)
+    lotus_rise.add_child(build_lotus)
+    root.add_child(lotus_rise)
   end
 
   def build_lotus
-    @lotus    = LotusNode.new(0, 0, DiamondThroneNode::TOTAL_H + 2, 28, 77, [255, 170, 200])
+    @lotus    = LotusNode.new(0, 0, 0, 28, 77, [255, 170, 200])
     @syllables = []
     mid_r = (28.0 + 77.0) / 2.0
     # back-to-front order so closer syllables render on top (painter's algorithm with DISABLE_DEPTH_MASK)
     # 6=om(back), 4=tram(left), 0=a(right), hri(center), 2=hung(front)
     [[6, :om, 45, 25], [4, :tram, 80, 50], [0, :a, 45, 25]].each do |petal_i, key, w, h|
       a = TWO_PI * petal_i / LotusNode::PETAL_COUNT
-      s = SyllableNode.new(Math.cos(a) * mid_r, Math.sin(a) * mid_r, 0, a, w, h, key)
+      s = SyllableNode.new(Math.cos(a) * mid_r, Math.sin(a) * mid_r, 5, a, w, h, key)
       @syllables << s
       @lotus.add_child(s)
     end
@@ -118,9 +120,9 @@ class MandalaScene
       petal_i = i == 0 ? nil : 2
       if petal_i
         a = TWO_PI * petal_i / LotusNode::PETAL_COUNT
-        s = SyllableNode.new(Math.cos(a) * mid_r, Math.sin(a) * mid_r, 0, a, 80, 50, key)
+        s = SyllableNode.new(Math.cos(a) * mid_r, Math.sin(a) * mid_r, 5, a, 80, 50, key)
       else
-        s = SyllableNode.new(0, 0, 0, HALF_PI, 80, 50, key)
+        s = SyllableNode.new(0, 0, 5, HALF_PI, 80, 50, key)
       end
       @syllables << s
       @lotus.add_child(s)

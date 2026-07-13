@@ -14,6 +14,7 @@ class SyllableNode < MandalaNode
   end
 
   def render(app, wall_h, textures = {})
+    return if @syllable_progress <= 0.0
     progress = [@syllable_progress.to_f, 1.0].min
     app.push_matrix
     app.translate(@x.to_f, @y.to_f, @z.to_f - (1.0 - progress) * RISE_AMOUNT)
