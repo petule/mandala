@@ -21,6 +21,8 @@ class Mandala < Propane::App
     @vajra_max       = @max_height * MandalaScene::VAJRA_H_FACTOR
     @syllable_height = 0.0
     @syllable_max    = @max_height
+    @roof_progress   = 0.0
+    @roof_max        = 100.0
     @dome_height     = 10.0
     @dome_max        = @max_height * MandalaScene::DOME_H_FACTOR
     @scene        = MandalaScene.new(@max_height)
@@ -52,8 +54,10 @@ class Mandala < Propane::App
         @dome_height = [@dome_height + ANIM_STEP, @dome_max].min
       elsif @gate_push >= @gate_push_max
         @vajra_height = [@vajra_height + ANIM_STEP, @vajra_max].min
-      elsif @syllable_height >= @syllable_max
+      elsif @roof_progress >= @roof_max
         @gate_push = [@gate_push + ANIM_STEP, @gate_push_max].min
+      elsif @syllable_height >= @syllable_max
+        @roof_progress = [@roof_progress + ANIM_STEP, @roof_max].min
       elsif @wall_height >= @max_height
         @syllable_height = [@syllable_height + ANIM_STEP, @syllable_max].min
       end
@@ -64,6 +68,8 @@ class Mandala < Propane::App
         @vajra_height = [@vajra_height - ANIM_STEP, 0.0].max
       elsif @gate_push > 0
         @gate_push = [@gate_push - ANIM_STEP, 0.0].max
+      elsif @roof_progress > 0
+        @roof_progress = [@roof_progress - ANIM_STEP, 0.0].max
       elsif @syllable_height > 0
         @syllable_height = [@syllable_height - ANIM_STEP, 0.0].max
       end
@@ -71,6 +77,7 @@ class Mandala < Propane::App
 
     @scene.update_vajra(@vajra_height)
     @scene.update_syllables(@syllable_height / @syllable_max)
+    @scene.update_roof(@roof_progress / @roof_max)
     @scene.update_dome(@dome_height)
     @scene.update_gates(@wall_height / @max_height)
     @scene.update_gate_push(@gate_push)
@@ -102,7 +109,7 @@ class Mandala < Propane::App
       case key_code
       when UP then @wall_height = [@wall_height + ANIM_STEP, @max_height].min
       when DOWN
-        if @dome_height <= 0 && @vajra_height <= 0 && @gate_push <= 0 && @syllable_height <= 0
+        if @dome_height <= 0 && @vajra_height <= 0 && @gate_push <= 0 && @roof_progress <= 0 && @syllable_height <= 0
           @wall_height = [@wall_height - ANIM_STEP, 0.0].max
         end
       end

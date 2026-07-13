@@ -7,6 +7,7 @@ require_relative 'nodes/vajra_dome_node'
 require_relative 'nodes/diamond_throne_node'
 require_relative 'nodes/rising_group_node'
 require_relative 'nodes/syllable_node'
+require_relative 'nodes/temple_roof_node'
 
 class MandalaScene
   HALF_PI        = (Math::PI / 2.0).freeze
@@ -14,14 +15,16 @@ class MandalaScene
   T_WALL         = 7.freeze
   Z_LIFT         = 7.freeze
   GREEN_D        = 830.freeze
-  VAJRA_H_FACTOR = 3.0.freeze
-  DOME_H_FACTOR  = 3.5.freeze
+  VAJRA_H_FACTOR = 3.8.freeze
+  DOME_H_FACTOR  = 4.3.freeze
   LOTUS_INNER_R  = 28.freeze
   LOTUS_OUTER_R  = 77.freeze
   SYLLABLE_LG_W  = 80.freeze
   SYLLABLE_LG_H  = 50.freeze
   SYLLABLE_SM_W  = 45.freeze
   SYLLABLE_SM_H  = 25.freeze
+
+  ROOF_SCALE = 160.freeze
 
   attr_reader :root, :gates, :fire_dome, :vajra_dome
 
@@ -56,6 +59,10 @@ class MandalaScene
     @lotus.syllable_progress = progress
   end
 
+  def update_roof(progress)
+    @roof.roof_progress = progress
+  end
+
   private
 
   def build
@@ -64,9 +71,15 @@ class MandalaScene
     lifted = MandalaNode.new(0, 0, Z_LIFT, 0, 0, 0)
     build_palace(lifted)
     build_inner(lifted)
+    build_roof(lifted)
     build_domes(lifted)
     root.add_child(lifted)
     root
+  end
+
+  def build_roof(root)
+    @roof = TempleRoofNode.new(0, 0, 100, scale: ROOF_SCALE)
+    root.add_child(@roof)
   end
 
   def build_domes(root)
